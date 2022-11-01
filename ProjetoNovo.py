@@ -2,8 +2,8 @@ from tkinter import *
 from tkinter import ttk
 import tkinter.messagebox
 
-janela = Tk()
 
+janela = Tk()
 
 
 class Funcs():
@@ -94,6 +94,7 @@ class Funcs():
         else:
             self.calculo_diametro()
             self.velocidade_economica()
+            print(self.perda_carga_singular())
 
 
 
@@ -188,6 +189,68 @@ class Funcs():
         self.vel_econ_succao = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_succao / 1000)) ** 2))
         ###Velocidade econômica do recalque
         self.vel_econ_recalque = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_recalque / 1000)) ** 2))
+
+    def perda_carga_singular(self, vel_econ_succao, vel_econ_recalque, perda_carga_singular_final):
+        coef_carga_singular_succao = {self.combobox_curva90_s: 0.40,
+        self.combobox_curva90_r: 0.40,  
+        self.combobox_curva45_s: 0.20,
+        self.combobox_curva45_r: 0.20,
+        self.combobox_joelho90_s: 0.90,
+        self.combobox_joelho90_r: 0.90, 
+        self.combobox_joelho45_s: 0.40,
+        self.combobox_joelho45_r: 0.40,
+        self.combobox_crivo_s: 1.75, 
+        self.combobox_val_globo_s: 10.00, 
+        self.combobox_val_globo_r: 10.00,
+        self.combobox_val_gaveta_s: 0.20,
+        self.combobox_val_gaveta_r: 0.20,
+        self.combobox_val_ret_pesado_r: 2.50,
+        self.combobox_val_ret_leve_r: 2.50}
+
+        def pcs_succao(self, vel_econ_succao, vel_econ_recalque):
+            if self.combobox_curva90_s.get != 0:
+                perda_carga_singular_curva90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva90_s.get)*(vel_econ_succao**2)/2*9,81
+            elif self.combobox_curva45_s.get != 0:
+                perda_carga_singular_curva45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva45_s.get)*(vel_econ_succao**2)/2*9,81
+            elif self.combobox_joelho90_s.get != 0:
+                perda_carga_singular_joelho90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho90_s.get)*(vel_econ_succao**2)/2*9,81
+            elif self.combobox_joelho45_s.get != 0:
+                perda_carga_singular_joelho45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho45_s.get)*(vel_econ_succao**2)/2*9,81
+            elif self.combobox_crivo_s != 0:
+                perda_carga_singular_crivo = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_crivo_s)*(vel_econ_succao**2)/2*9,81
+            elif self.combobox_val_globo_s.get != 0:
+                perda_carga_singular_val_globo = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_globo_s.get)*(vel_econ_succao**2)/2*9,81
+            elif self.combobox_val_gaveta_s != 0:
+                perda_carga_singular_val_gaveta = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_gaveta_s)*(vel_econ_succao**2)/2*9,81
+
+            perda_carga_singular_final_s = sum(perda_carga_singular_curva90, perda_carga_singular_curva45, perda_carga_singular_joelho90,
+                perda_carga_singular_joelho45,perda_carga_singular_crivo,perda_carga_singular_val_globo,perda_carga_singular_val_gaveta)
+
+        def pcs_recalque(self, vel_econ_succao, vel_econ_recalque):
+
+            if self.combobox_curva90_s.get != 0:
+                perda_carga_singular_curva90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva90_r.get)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_curva45_s.get != 0:
+                perda_carga_singular_curva45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva45_r.get)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_joelho90_s.get != 0:
+                perda_carga_singular_joelho90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho90_r.get)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_joelho45_s.get != 0:
+                perda_carga_singular_joelho45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho45_r.get)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_ret_leve_r != 0:
+                perda_carga_singular_ret_leve = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_ret_pesado_r)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_ret_pesada_r != 0:
+                perda_carga_singular_ret_pesado = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_ret_leve_r)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_val_globo_s.get != 0:
+                perda_carga_singular_val_globo = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_globo_r.get)*(vel_econ_recalque**2)/2*9,81
+            elif self.combobox_val_gaveta_s != 0:
+                perda_carga_singular_val_gaveta = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_gaveta_r)*(vel_econ_recalque**2)/2*9,81
+
+            perda_carga_singular_final_r = sum(perda_carga_singular_curva90, perda_carga_singular_curva45, perda_carga_singular_joelho90,
+                perda_carga_singular_joelho45, perda_carga_singular_ret_leve, perda_carga_singular_val_globo, perda_carga_singular_val_gaveta)
+                    
+            return perda_carga_singular_final_r
+        
+        return sum(pcs_recalque(), pcs_succao())
 
 
 class Recalque(Funcs):
@@ -435,9 +498,5 @@ class Recalque(Funcs):
         self.frame_4 = Frame(self.janela, bd=4, bg='#778899', highlightbackground='#6495ED', highlightthickness=3)
         self.frame_4.place(x=810, y=200, width=180, height=380)
 
-
-
-
 Recalque()
-
 
