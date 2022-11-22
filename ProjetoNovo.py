@@ -204,28 +204,6 @@ class Funcs():
                                   (math.pi*np.power((float(self.diametro_recalque)), 2))
         # self.vel_econ_recalque = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_recalque / 1000)) ** 2))
 
-    # def perda_carga_singular(self):
-
-        # qntd_tubulação*ks*((velocidade economica ^ 2)/(2 * 9,81))
-
-        """
-        coef_carga_singular = {self.combobox_curva90_s: 0.40,
-        self.combobox_curva90_r: 0.40,
-        self.combobox_curva45_s: 0.20,
-        self.combobox_curva45_r: 0.20,
-        self.combobox_joelho90_s: 0.90,
-        self.combobox_joelho90_r: 0.90,
-        self.combobox_joelho45_s: 0.40,
-        self.combobox_joelho45_r: 0.40,
-        self.combobox_crivo_s: 1.75,
-        self.combobox_val_globo_s: 10.00,
-        self.combobox_val_globo_r: 10.00,
-        self.combobox_val_gaveta_s: 0.20,
-        self.combobox_val_gaveta_r: 0.20,
-        self.combobox_ret_pesada_r: 2.50,
-        self.combobox_ret_leve_r: 2.50}
-        """
-
     def pcs_succao_recalque(self):
 
         # sucção
