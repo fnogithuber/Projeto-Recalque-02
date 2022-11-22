@@ -1,22 +1,23 @@
 from tkinter import *
 from tkinter import ttk
 import tkinter.messagebox
-
+import numpy as np
+import math
 
 janela = Tk()
 
 
 class Funcs():
     def limpa_campos(self):
-        ###widgets frame 1
+        # widgets frame 1
         self.vazao_entry.delete(0, END)
         self.combobox_material.delete(0, END)
-        self.tempo_entry.delete(0, END)
+        self.tempo_entry.delete(0, END) 
         self.altura_succao_entry.delete(0, END)
         self.altura_recalque_entry.delete(0, END)
         self.comp_succao_entry.delete(0, END)
         self.comp_recalque_entry.delete(0, END)
-        ###widgets frame2
+        # widgets frame2
         self.combobox_curva90_s.current(0)
         self.combobox_joelho90_s.current(0)
         self.combobox_curva45_s.current(0)
@@ -24,7 +25,7 @@ class Funcs():
         self.combobox_crivo_s.current(0)
         self.combobox_val_globo_s.current(0)
         self.combobox_val_gaveta_s.current(0)
-        ###widgets frame 3
+        # widgets frame 3
         self.combobox_curva90_r.current(0)
         self.combobox_joelho90_r.current(0)
         self.combobox_curva45_r.current(0)
@@ -79,31 +80,39 @@ class Funcs():
             self.validation_comp_recalque = False
 
     def tratamento_erros(self):
-        self.x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
+        self.x = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12,
+            13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
         self.y = []
         self.z = []
 
         self.isNumber()
         self.listas()
-        #self.y.pop(0)
-
+        # self.y.pop(0)
 
         if self.validation_vazao == False or (self.validation_vazao == True and int(self.vazao_entry.get()) not in self.y) or int(self.vazao_entry.get()) == 0 or self.combobox_material.get() not in ["PVC", "Ferro galvanizado"] or self.validation_tempo == False or int(self.tempo_entry.get()) <= 0 or (self.validation_altura_succao == False or int(self.altura_succao_entry.get()) not in self.z) or int(self.altura_succao_entry.get()) == 0 or self.validation_altura_recalque == False or (int(self.altura_recalque_entry.get()) not in self.z or int(self.altura_recalque_entry.get()) == 0) or (self.validation_comp_succao == False or int(self.comp_succao_entry.get()) not in self.z or int(self.comp_succao_entry.get()) == 0) or (self.validation_comp_recalque == False or int(self.comp_recalque_entry.get()) not in self.z or int(self.comp_recalque_entry.get()) == 0):
-            tkinter.messagebox.showwarning("Aviso", "Erro nos valores digitados!")
+            tkinter.messagebox.showwarning(
+                "Aviso", "Erro nos valores digitados!")
 
         else:
             self.calculo_diametro()
             self.velocidade_economica()
-            print(self.perda_carga_singular())
-
-
+            self.pcs_succao_recalque()
+            print(self.vazao_ajustada_cubic_meters)
+            print(self.diametro_tubulacao)
+            print(self.vel_econ_succao)
+            print(self.vel_econ_recalque)
+            print(self.perda_carga_total)
 
     def calculo_diametro(self):
-        self.vazao_ajustada = float((24 * float(self.vazao_entry.get())) / float(self.tempo_entry.get()))
+        self.vazao_ajustada = float(
+            (24 * float(self.vazao_entry.get())) / float(self.tempo_entry.get()))
         self.vazao_ajustada_cubic_meters = float(self.vazao_ajustada) / 1000
-        self.vazao_ajustada_cubic_hours = float(self.vazao_ajustada_cubic_meters) * 3600
+        # self.vazao_ajustada_cubic_hours = float(self.vazao_ajustada_cubic_meters) * 3600
 
-        self.diametro_tubulacao = (1.3 *((float(self.tempo_entry.get()) / 24) ** 0.25) * ((self.vazao_ajustada_cubic_meters) ** 0.5)) * 1000
+        self.diametro_tubulacao = 1.3 * \
+            math.pow((float(self.tempo_entry.get())/24), 1/4) * \
+                     math.sqrt(self.vazao_ajustada_cubic_meters)
+        # self.diametro_tubulacao = (1.3 *((float(self.tempo_entry.get()) / 24) ** 0.25) * ((self.vazao_ajustada_cubic_meters) ** 0.5)) * 1000
 
         if self.diametro_tubulacao <= 6.3:
             self.diametro_succao = 6.3
@@ -185,72 +194,93 @@ class Funcs():
             self.diametro_recalque = 700
 
     def velocidade_economica(self):
-        ###Velocidade econômica da sucção
-        self.vel_econ_succao = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_succao / 1000)) ** 2))
-        ###Velocidade econômica do recalque
-        self.vel_econ_recalque = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_recalque / 1000)) ** 2))
+        # Velocidade econômica da sucção
+        self.vel_econ_succao = (4*(self.vazao_ajustada_cubic_meters)) / \
+                                (math.pi*np.power((float(self.diametro_succao)), 2))
+        # self.vel_econ_succao = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_succao / 1000)) ** 2))
 
-    def perda_carga_singular(self, vel_econ_succao, vel_econ_recalque, perda_carga_singular_final):
-        coef_carga_singular_succao = {self.combobox_curva90_s: 0.40,
-        self.combobox_curva90_r: 0.40,  
+        # Velocidade econômica do recalque
+        self.vel_econ_recalque = (4*self.vazao_ajustada_cubic_meters) / \
+                                  (math.pi*np.power((float(self.diametro_recalque)), 2))
+        # self.vel_econ_recalque = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (float((self.diametro_recalque / 1000)) ** 2))
+
+    # def perda_carga_singular(self):
+
+        # qntd_tubulação*ks*((velocidade economica ^ 2)/(2 * 9,81))
+
+        """
+        coef_carga_singular = {self.combobox_curva90_s: 0.40,
+        self.combobox_curva90_r: 0.40,
         self.combobox_curva45_s: 0.20,
         self.combobox_curva45_r: 0.20,
         self.combobox_joelho90_s: 0.90,
-        self.combobox_joelho90_r: 0.90, 
+        self.combobox_joelho90_r: 0.90,
         self.combobox_joelho45_s: 0.40,
         self.combobox_joelho45_r: 0.40,
-        self.combobox_crivo_s: 1.75, 
-        self.combobox_val_globo_s: 10.00, 
+        self.combobox_crivo_s: 1.75,
+        self.combobox_val_globo_s: 10.00,
         self.combobox_val_globo_r: 10.00,
         self.combobox_val_gaveta_s: 0.20,
         self.combobox_val_gaveta_r: 0.20,
-        self.combobox_val_ret_pesado_r: 2.50,
-        self.combobox_val_ret_leve_r: 2.50}
+        self.combobox_ret_pesada_r: 2.50,
+        self.combobox_ret_leve_r: 2.50}
+        """
 
-        def pcs_succao(self, vel_econ_succao, vel_econ_recalque):
-            if self.combobox_curva90_s.get != 0:
-                perda_carga_singular_curva90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva90_s.get)*(vel_econ_succao**2)/2*9,81
-            elif self.combobox_curva45_s.get != 0:
-                perda_carga_singular_curva45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva45_s.get)*(vel_econ_succao**2)/2*9,81
-            elif self.combobox_joelho90_s.get != 0:
-                perda_carga_singular_joelho90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho90_s.get)*(vel_econ_succao**2)/2*9,81
-            elif self.combobox_joelho45_s.get != 0:
-                perda_carga_singular_joelho45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho45_s.get)*(vel_econ_succao**2)/2*9,81
-            elif self.combobox_crivo_s != 0:
-                perda_carga_singular_crivo = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_crivo_s)*(vel_econ_succao**2)/2*9,81
-            elif self.combobox_val_globo_s.get != 0:
-                perda_carga_singular_val_globo = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_globo_s.get)*(vel_econ_succao**2)/2*9,81
-            elif self.combobox_val_gaveta_s != 0:
-                perda_carga_singular_val_gaveta = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_gaveta_s)*(vel_econ_succao**2)/2*9,81
+    def pcs_succao_recalque(self):
 
-            perda_carga_singular_final_s = sum(perda_carga_singular_curva90, perda_carga_singular_curva45, perda_carga_singular_joelho90,
-                perda_carga_singular_joelho45,perda_carga_singular_crivo,perda_carga_singular_val_globo,perda_carga_singular_val_gaveta)
+        # sucção
 
-        def pcs_recalque(self, vel_econ_succao, vel_econ_recalque):
+        if self.combobox_curva90_s.get != 0:
+            self.perda_carga_singular_curva90 = (float(self.combobox_curva90_s.get())*0.40)*(np.power(self.vel_econ_succao, 2)/(2*9, 81))
+        elif self.combobox_curva45_s.get != 0:
+            self.perda_carga_singular_curva45 = (float(self.combobox_curva45_s.get())*0.20)*(np.power(self.vel_econ_succao, 2)/(2*9, 81))
+        elif self.combobox_joelho90_s.get != 0:
+            self.perda_carga_singular_joelho90 = (float(self.combobox_joelho90_s.get())*0.90)*(np.power(self.vel_econ_succao, 2)/(2*9, 81))
+        elif self.combobox_joelho45_s.get != 0:
+            self.perda_carga_singular_joelho45 = (float(self.combobox_joelho45_s.get())*0.40)*(np.power(self.vel_econ_succao, 2)/(2*9, 81))
+        elif self.combobox_crivo_s != 0:
+            self.perda_carga_singular_crivo = (float(self.combobox_crivo_s.get())*1.75)*(np.power(self.vel_econ_succao, 2)/(2*9,81))
+        elif self.combobox_val_globo_s.get != 0:
+            self.perda_carga_singular_val_globo = (float(self.combobox_val_globo_s.get())*10)*(np.power(self.vel_econ_succao, 2)/(2*9,81))
+        elif self.combobox_val_gaveta_s != 0:
+            self.perda_carga_singular_val_gaveta = (float(self.combobox_val_gaveta_s.get())*0.20)*(np.power(self.vel_econ_succao, 2)/(2*9,81))
+        else:
+            self.sem_perda_s = 0
 
-            if self.combobox_curva90_s.get != 0:
-                perda_carga_singular_curva90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva90_r.get)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_curva45_s.get != 0:
-                perda_carga_singular_curva45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_curva45_r.get)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_joelho90_s.get != 0:
-                perda_carga_singular_joelho90 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho90_r.get)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_joelho45_s.get != 0:
-                perda_carga_singular_joelho45 = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_joelho45_r.get)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_ret_leve_r != 0:
-                perda_carga_singular_ret_leve = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_ret_pesado_r)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_ret_pesada_r != 0:
-                perda_carga_singular_ret_pesado = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_ret_leve_r)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_val_globo_s.get != 0:
-                perda_carga_singular_val_globo = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_globo_r.get)*(vel_econ_recalque**2)/2*9,81
-            elif self.combobox_val_gaveta_s != 0:
-                perda_carga_singular_val_gaveta = lambda vel_econ_succao, coef_carga_singular: (coef_carga_singular*self.combobox_val_gaveta_r)*(vel_econ_recalque**2)/2*9,81
+        # recalque
 
-            perda_carga_singular_final_r = sum(perda_carga_singular_curva90, perda_carga_singular_curva45, perda_carga_singular_joelho90,
-                perda_carga_singular_joelho45, perda_carga_singular_ret_leve, perda_carga_singular_val_globo, perda_carga_singular_val_gaveta)
+        if self.combobox_curva90_s.get != 0:
+            self.self.perda_carga_singular_curva90 = (float(self.combobox_curva90_r.get())*0.40)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_curva45_s.get != 0:
+            self.perda_carga_singular_curva45 = (float(self.combobox_curva45_r.get())*0.20)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_joelho90_s.get != 0:
+            self.perda_carga_singular_joelho90 = (float(self.combobox_joelho90_r.get())*0.90)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_joelho45_s.get != 0:
+            self.perda_carga_singular_joelho45 = (float(self.combobox_joelho45_r.get())*0.40)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_ret_leve_r != 0:
+            self.perda_carga_singular_ret_leve = (float(self.combobox_ret_pesada_r.get())*2.50)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_ret_pesada_r != 0:
+            self.perda_carga_singular_ret_pesada = (float(self.combobox_ret_leve_r.get())*2.50)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_val_globo_s.get != 0:
+            self.perda_carga_singular_val_globo = (float(self.combobox_val_globo_r.get())*10)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        elif self.combobox_val_gaveta_s != 0:
+            self.perda_carga_singular_val_gaveta = (float(self.combobox_val_gaveta_r.get())*0.20)*(np.power(self.vel_econ_recalque, 2)/(2*9,81))
+        else:
+            self.sem_perda_r = 0
+
+        list_perda_s = (self.perda_carga_singular_curva90, self.perda_carga_singular_curva45, self.perda_carga_singular_joelho90,
+            self.perda_carga_singular_joelho45, self.perda_carga_singular_crivo, self.perda_carga_singular_val_globo, self.perda_carga_singular_val_gaveta)
+
+        self.perda_carga_singular_final_s = sum(list_perda_s)
+
+        list_perda_r = (self.perda_carga_singular_curva90, self.perda_carga_singular_curva45, self.perda_carga_singular_joelho90,
+            self.perda_carga_singular_joelho45, self.perda_carga_singular_ret_leve, self.perda_carga_singular_ret_pesada, self.perda_carga_singular_val_globo, 
+            self.perda_carga_singular_val_gaveta)
+
+        self.perda_carga_singular_final_r = sum(list_perda_r)
                     
-            return perda_carga_singular_final_r
-        
-        return sum(pcs_recalque(), pcs_succao())
+        self.perda_carga_total = self.perda_carga_singular_final_r + self.perda_carga_singular_final_s
+        return self.perda_carga_total
 
 
 class Recalque(Funcs):
@@ -279,73 +309,73 @@ class Recalque(Funcs):
         self.janela.resizable(width=False, height=False)
 
     def widgets_frame1(self):
-       ### Criando campo de vazão
+       # Criando campo de vazão
         self.vazao_entry = Entry(self.frame_1)
         self.vazao_entry.place(x=15, y=30)
         self.vazao_entry.configure(width=4, font=("arial", 12))
 
 
-        ###Criando label do campo de vazão
+        # Criando label do campo de vazão
         self.label_vazao = Label(self.frame_1, text="Vazão (L/s)", bg='#778899', font=("Arial", 12), fg='white')
         self.label_vazao.place(x=2, y=5)
 
-        ### Criando combobox para seleção do material
+        # Criando combobox para seleção do material
         self.combobox_material = ttk.Combobox(self.frame_1, width=13, height=8, font=("arial", 12))
         self.combobox_material.place(x=150, y=32)
         self.combobox_material['values'] = ("PVC", "Ferro galvanizado", "")
 
 
-        ###Criando label para o combobox
+        # Criando label para o combobox
         self.label_material = Label(self.frame_1, text="Material", bg='#778899', font=("Arial", 12), fg='white')
         self.label_material.place(x=190, y=5)
 
-        ###Criando label de tempo de funcionamento
+        # Criando label de tempo de funcionamento
         self.label_tempo = Label(self.frame_1, text="Bomba ON (h)", bg='#778899', font=("Arial", 12), fg='white')
         self.label_tempo.place(x=330, y=5)
 
-        ###Criando entry para o tempo
+        # Criando entry para o tempo
         self.tempo_entry = Entry(self.frame_1)
         self.tempo_entry.place(x=370, y=30)
         self.tempo_entry.configure(width=3, font=("arial", 12))
 
-        ###label para altura de sucção
+        # label para altura de sucção
         self.altura_succao = Label(self.frame_1, text="Altura de sucção (m)", bg='#778899', font=("Arial", 12), fg='white')
         self.altura_succao.place(x=510, y=5)
 
-        ### entry para altura de sucção
+        # entry para altura de sucção
         self.altura_succao_entry = Entry(self.frame_1)
         self.altura_succao_entry.place(x=570, y=30)
         self.altura_succao_entry.configure(width=3, font=("arial", 12))
 
-        ### label para altura de recalque
+        # label para altura de recalque
         self.altura_recalque = Label(self.frame_1, text="Altura de recalque (m)", bg='#778899', font=("Arial", 12), fg='white')
         self.altura_recalque.place(x=710, y=5)
 
-        ### Criação da entry para altura de recalque
+        # Criação da entry para altura de recalque
         self.altura_recalque_entry = Entry(self.frame_1)
         self.altura_recalque_entry.place(x=770, y=30)
         self.altura_recalque_entry.configure(width=3, font=("arial", 12))
 
-        ###label para comprimento da sucção
+        # label para comprimento da sucção
         self.comprimento_succao = Label(self.frame_1, text="L sucção (m)", bg='#778899', font=("Arial", 12),fg='white')
         self.comprimento_succao.place(x=3, y=80)
 
-        ### entry para comprimento da sucção
+        # entry para comprimento da sucção
         self.comp_succao_entry = Entry(self.frame_1)
         self.comp_succao_entry.place(x=15, y=105)
         self.comp_succao_entry.configure(width=3, font=("arial", 12))
 
-        ###label para comprimento do recalque
+        # label para comprimento do recalque
         self.comprimento_recalque = Label(self.frame_1, text="L recalque (m)", bg='#778899', font=("Arial", 12), fg='white')
         self.comprimento_recalque.place(x=150, y=80)
 
-        ### entry para comprimento do recalque
+        # entry para comprimento do recalque
         self.comp_recalque_entry = Entry(self.frame_1)
         self.comp_recalque_entry.place(x=180, y=105)
         self.comp_recalque_entry.configure(width=3, font=("arial", 12))
 
     def widgets_frame2(self):
-        ###Comboboxs do frame2
+        # Comboboxs do frame2
         self.combobox_curva90_s = ttk.Combobox(self.frame_2, width=2, height=8, font=("arial", 12))
         self.combobox_curva90_s.place(x=30, y=50)
         self.combobox_curva90_s['values'] = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -382,7 +412,7 @@ class Recalque(Funcs):
         self.combobox_val_gaveta_s.current(0)
 
     def widgets_frame3(self):
-        ###Comboboxs do frame3
+        # Comboboxs do frame3
         self.combobox_curva90_r = ttk.Combobox(self.frame_3, width=2, height=8, font=("arial", 12))
         self.combobox_curva90_r.place(x=30, y=50)
         self.combobox_curva90_r['values'] = (0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10)
@@ -424,7 +454,7 @@ class Recalque(Funcs):
         self.combobox_ret_pesada_r.current(0)
 
     def labels_frames(self):
-        ###labels da Sucção
+        # labels da Sucção
         self.label01 = Label(self.frame_2, text="curva de 90°", bg='#778899', font=("Arial", 10), fg='white')
         self.label01.place(x=15, y=25)
 
@@ -446,7 +476,7 @@ class Recalque(Funcs):
         self.label07 = Label(self.frame_2, text="válvula gaveta", bg='#778899', font=("Arial", 10), fg='white')
         self.label07.place(x=15, y=205)
 
-        ###labels do Recalque
+        # labels do Recalque
         self.label08 = Label(self.frame_3, text="curva de 90°", bg='#778899', font=("Arial", 10), fg='white')
         self.label08.place(x=15, y=25)
 
