@@ -8,6 +8,7 @@ janela = Tk()
 
 
 
+
 class Funcs():
     def limpa_campos(self):
         # widgets frame 1
@@ -112,6 +113,8 @@ class Funcs():
             self.pcs_succao_recalque()
             self.altura_manometrica()
             self.NPSH()
+            self.Tela_resultado()
+
             print(self.vazao_ajustada_cubic_meters)
             print(self.diametro_tubulacao)
             print(self.vel_econ_succao)
@@ -338,11 +341,14 @@ class Recalque(Funcs):
 
         janela.mainloop()
 
+
     def cria_janela(self):
         self.janela.title("Cálculo para Recalque")
         self.janela.configure(background='lightgray')
         self.janela.geometry("1000x600")
         self.janela.resizable(width=False, height=False)
+
+
 
     def widgets_frame1(self):
         # Criando campo de vazão
@@ -568,6 +574,24 @@ class Recalque(Funcs):
 
         self.frame_4 = Frame(self.janela, bd=4, bg='#778899', highlightbackground='#6495ED', highlightthickness=3)
         self.frame_4.place(x=810, y=200, width=180, height=380)
+
+
+    def Tela_resultado(self):
+        result = Tk()
+        self.result = result
+
+
+        self.result.title("Resultados")
+        self.result.configure(background='lightgray')
+        self.result.geometry("900x600")
+        self.result.resizable(width=False, height=False)
+
+        self.frame = Frame(self.result, bd=4, bg='#778899', highlightbackground='#6495ED', highlightthickness=3)
+        self.frame.place(x=10, y=10, width=880, height=580)
+
+
+        result.mainloop()
+
 
 
 Recalque()
