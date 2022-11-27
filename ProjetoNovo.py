@@ -583,13 +583,14 @@ class Recalque(Funcs):
 
         self.result.title("Resultados")
         self.result.configure(background='lightgray')
-        self.result.geometry("500x400")
+        self.result.geometry("500x530")
         self.result.resizable(width=False, height=False)
 
         self.frame_result = Frame(self.result, bd=4, bg='#778899', highlightbackground='#6495ED', highlightthickness=3)
-        self.frame_result.place(x=10, y=10, width=480, height=380)
+        self.frame_result.place(x=10, y=10, width=480, height=510)
 
         self.widgets_tela_resultado()
+        self.limpa_campos()
 
 
         result.mainloop()
@@ -598,12 +599,15 @@ class Recalque(Funcs):
     def widgets_tela_resultado(self):
         self.vel_econ_recalque = round(self.vel_econ_recalque, 2)
         self.vel_econ_succao = round(self.vel_econ_succao, 2)
+        self.perda_carga_singular_final_r = round(self.perda_carga_singular_final_r, 2)
+        self.perda_carga_singular_final_s = round(self.perda_carga_singular_final_s, 2)
+        self.perda_carga_total = round(self.perda_carga_total, 2)
 
         label18 = self.label18 = Label(self.frame_result, text="Altura manométrica da bomba: " + str(self.altura_man_bomba) + " m", foreground='white',
                                 font=("Arial", 15), fg='black')
         self.label18.place(x=20, y=20)
 
-        label19 = self.label19 = Label(self.frame_result,text="Vazão do sistema: " + str(self.vazao_ajustada_cubic_hours) + " m³/h", foreground='white',
+        label19 = self.label19 = Label(self.frame_result, text="Vazão do sistema: " + str(self.vazao_ajustada_cubic_hours) + " m³/h", foreground='white',
                                        font=("Arial", 15), fg='black')
         self.label19.place(x=20, y=60)
 
@@ -626,6 +630,18 @@ class Recalque(Funcs):
         label24 = self.label24 = Label(self.frame_result, text="Diâmetro da sucção: " + str(self.diametro_succao) + " mm", foreground='white',
                                        font=("Arial", 15), fg='black')
         self.label24.place(x=20, y=260)
+
+        label25 = self.label25 = Label(self.frame_result, text="Perda de carga no recalque: " + str(self.perda_carga_singular_final_r) + " m", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label25.place(x=20, y=300)
+
+        label26 = self.label26 = Label(self.frame_result, text="Perda de carga na sucção: " + str(self.perda_carga_singular_final_s) + " m", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label26.place(x=20, y=340)
+
+        label27 = self.label27 = Label(self.frame_result, text="Perda de carga total: " + str(self.perda_carga_total) + " m", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label27.place(x=20, y=380)
 
 
 
