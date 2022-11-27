@@ -113,14 +113,20 @@ class Funcs():
             self.pcs_succao_recalque()
             self.altura_manometrica()
             self.NPSH()
+            self.fator_atrito()
+            self.perda_carga_distribuida_s()
             self.Tela_resultado()
 
-            print(self.vazao_ajustada_cubic_meters)
+            print(self.fator_atrito_s_pvc)
+            print(self.fator_atrito_r_pvc)
+            print(self.fator_atrito_s_ferro)
+            print(self.fator_atrito_r_ferro)
+            print(self.diametro_succao)
             print(self.diametro_recalque)
-            print(self.vel_econ_succao)
-            print(self.vel_econ_recalque)
-            print(self.altura_man_bomba)
-            print(self.npsh_disp)
+            print(self.perda_carga_dist_s)
+
+
+
 
 
 
@@ -317,6 +323,33 @@ class Funcs():
         self.perda_carga_singular_final_r = sum(list_perda_r)
 
         self.perda_carga_total = self.perda_carga_singular_final_r + self.perda_carga_singular_final_s
+
+
+    def fator_atrito(self):
+
+        #Cálculo do número de Reynolds para sucção
+        self.reynolds_s = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (self.diametro_succao / 100) * 1E-6)
+
+        # Cálculo do número de Reynolds para o recalque
+        self.reynolds_r = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (self.diametro_recalque / 100) * 1E-6)
+
+        #fator de atrito na sucção com pvc
+        self.fator_atrito_s_pvc = 1.325 / (math.log(((5.74 / (self.reynolds_s ** 0.9))), 2)) ** 2
+
+        # fator de atrito no recalque com pvc
+        self.fator_atrito_r_pvc = 1.325 / (math.log(((5.74 / (self.reynolds_r ** 0.9))), 2)) ** 2
+
+        # fator de atrito na sucção com ferro galvanizado
+        self.fator_atrito_s_ferro = 1.325 / (math.log(((0.15 / (3.7 * self.diametro_succao) + (5.74 / (self.reynolds_s ** 0.9)))), 2)) ** 2
+
+        # fator de atrito no recalque com ferro galvanizado
+        self.fator_atrito_r_ferro = 1.325 / (math.log(((0.15 / (3.7 * self.diametro_recalque) + (5.74 / (self.reynolds_r ** 0.9)))), 2)) ** 2
+
+
+
+    def perda_carga_distribuida_s(self):
+        if str(self.combobox_material.get()) == "PVC":
+            self.perda_carga_dist_s = 0.0826 * self.fator_atrito_s_pvc * (float(self.comp_succao_entry.get()) / (self.diametro_succao / 1000)) * self.vazao_ajustada_cubic_meters
 
 
     def altura_manometrica(self):
