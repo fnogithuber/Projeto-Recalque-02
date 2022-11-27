@@ -116,7 +116,7 @@ class Funcs():
             self.Tela_resultado()
 
             print(self.vazao_ajustada_cubic_meters)
-            print(self.diametro_tubulacao)
+            print(self.diametro_recalque)
             print(self.vel_econ_succao)
             print(self.vel_econ_recalque)
             print(self.altura_man_bomba)
@@ -324,7 +324,7 @@ class Funcs():
         self.altura_man_bomba = round(self.altura_man_bomba, 2)
 
     def NPSH(self):
-        self.npsh_disp = (101300 / 7800) - (2 + self.perda_carga_singular_final_s + (32500 / 7800))
+        self.npsh_disp = round((101300 / 7800) - (2 + self.perda_carga_singular_final_s + (32500 / 7800)), 2)
 
 
 class Recalque(Funcs):
@@ -583,14 +583,49 @@ class Recalque(Funcs):
 
         self.result.title("Resultados")
         self.result.configure(background='lightgray')
-        self.result.geometry("900x600")
+        self.result.geometry("500x400")
         self.result.resizable(width=False, height=False)
 
-        self.frame = Frame(self.result, bd=4, bg='#778899', highlightbackground='#6495ED', highlightthickness=3)
-        self.frame.place(x=10, y=10, width=880, height=580)
+        self.frame_result = Frame(self.result, bd=4, bg='#778899', highlightbackground='#6495ED', highlightthickness=3)
+        self.frame_result.place(x=10, y=10, width=480, height=380)
+
+        self.widgets_tela_resultado()
 
 
         result.mainloop()
+
+
+    def widgets_tela_resultado(self):
+        self.vel_econ_recalque = round(self.vel_econ_recalque, 2)
+        self.vel_econ_succao = round(self.vel_econ_succao, 2)
+
+        label18 = self.label18 = Label(self.frame_result, text="Altura manométrica da bomba: " + str(self.altura_man_bomba) + " m", foreground='white',
+                                font=("Arial", 15), fg='black')
+        self.label18.place(x=20, y=20)
+
+        label19 = self.label19 = Label(self.frame_result,text="Vazão do sistema: " + str(self.vazao_ajustada_cubic_hours) + " m³/h", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label19.place(x=20, y=60)
+
+        label20 = self.label20 = Label(self.frame_result, text="NPSH disponível: " + str(self.npsh_disp) + " m", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label20.place(x=20, y=100)
+
+        label21 = self.label21 = Label(self.frame_result,text="Velocidade de recalque: " + str(self.vel_econ_recalque) + " m/s", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label21.place(x=20, y=140)
+
+        label22 = self.label22 = Label(self.frame_result, text="Velocidade de sucção: " + str(self.vel_econ_succao) + " m/s", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label22.place(x=20, y=180)
+
+        label23 = self.label23 = Label(self.frame_result, text="Diâmetro do recalque: " + str(self.diametro_recalque) + " mm", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label23.place(x=20, y=220)
+
+        label24 = self.label24 = Label(self.frame_result, text="Diâmetro da sucção: " + str(self.diametro_succao) + " mm", foreground='white',
+                                       font=("Arial", 15), fg='black')
+        self.label24.place(x=20, y=260)
 
 
 
