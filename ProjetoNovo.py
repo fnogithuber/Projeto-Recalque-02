@@ -110,20 +110,17 @@ class Funcs():
         else:
             self.calculo_diametro()
             self.velocidade_economica()
+            self.fator_atrito()
+            self.perda_carga_distribuida_s()
+            self.perda_carga_distribuida_r()
             self.pcs_succao_recalque()
             self.altura_manometrica()
             self.NPSH()
-            self.fator_atrito()
-            self.perda_carga_distribuida_s()
             self.Tela_resultado()
 
-            print(self.fator_atrito_s_pvc)
-            print(self.fator_atrito_r_pvc)
-            print(self.fator_atrito_s_ferro)
-            print(self.fator_atrito_r_ferro)
-            print(self.diametro_succao)
-            print(self.diametro_recalque)
-            print(self.perda_carga_dist_s)
+            print(self.perda_carga_singular_final_r)
+            print(self.perda_carga_singular_final_s)
+            print(self.perda_carga_total)
 
 
 
@@ -322,7 +319,7 @@ class Funcs():
 
         self.perda_carga_singular_final_r = sum(list_perda_r)
 
-        self.perda_carga_total = self.perda_carga_singular_final_r + self.perda_carga_singular_final_s
+        self.perda_carga_total = self.perda_carga_singular_final_r + self.perda_carga_singular_final_s + self.perda_carga_dist_s + self.perda_carga_dist_r
 
 
     def fator_atrito(self):
@@ -350,6 +347,14 @@ class Funcs():
     def perda_carga_distribuida_s(self):
         if str(self.combobox_material.get()) == "PVC":
             self.perda_carga_dist_s = 0.0826 * self.fator_atrito_s_pvc * (float(self.comp_succao_entry.get()) / (self.diametro_succao / 1000)) * self.vazao_ajustada_cubic_meters
+        elif str(self.combobox_material.get()) == "Ferro galvanizado":
+            self.perda_carga_dist_s = 0.0826 * self.fator_atrito_s_ferro * (float(self.comp_succao_entry.get()) / (self.diametro_succao / 1000)) * self.vazao_ajustada_cubic_meters
+
+    def perda_carga_distribuida_r(self):
+        if str(self.combobox_material.get()) == "PVC":
+            self.perda_carga_dist_r = 0.0826 * self.fator_atrito_r_pvc * (float(self.comp_recalque_entry.get()) / (self.diametro_recalque / 1000)) * self.vazao_ajustada_cubic_meters
+        elif  str(self.combobox_material.get()) == "Ferro galvanizado":
+            self.perda_carga_dist_r = 0.0826 * self.fator_atrito_r_ferro * (float(self.comp_recalque_entry.get()) / (self.diametro_recalque / 1000)) * self.vazao_ajustada_cubic_meters
 
 
     def altura_manometrica(self):
@@ -635,6 +640,8 @@ class Recalque(Funcs):
         self.perda_carga_singular_final_r = round(self.perda_carga_singular_final_r, 2)
         self.perda_carga_singular_final_s = round(self.perda_carga_singular_final_s, 2)
         self.perda_carga_total = round(self.perda_carga_total, 2)
+        self.perda_carga_total_s = round(self.perda_carga_singular_final_s + self.perda_carga_dist_s, 2)
+        self.perda_carga_total_r = round(self.perda_carga_singular_final_r + self.perda_carga_dist_r, 2)
 
         label18 = self.label18 = Label(self.frame_result, text="Altura manométrica da bomba: " + str(self.altura_man_bomba) + " m", foreground='white',
                                 font=("Arial", 15), fg='black')
@@ -664,11 +671,11 @@ class Recalque(Funcs):
                                        font=("Arial", 15), fg='black')
         self.label24.place(x=20, y=260)
 
-        label25 = self.label25 = Label(self.frame_result, text="Perda de carga no recalque: " + str(self.perda_carga_singular_final_r) + " m", foreground='white',
+        label25 = self.label25 = Label(self.frame_result, text="Perda de carga no recalque: " + str(self.perda_carga_total_r) + " m", foreground='white',
                                        font=("Arial", 15), fg='black')
         self.label25.place(x=20, y=300)
 
-        label26 = self.label26 = Label(self.frame_result, text="Perda de carga na sucção: " + str(self.perda_carga_singular_final_s) + " m", foreground='white',
+        label26 = self.label26 = Label(self.frame_result, text="Perda de carga na sucção: " + str(self.perda_carga_total_s) + " m", foreground='white',
                                        font=("Arial", 15), fg='black')
         self.label26.place(x=20, y=340)
 
