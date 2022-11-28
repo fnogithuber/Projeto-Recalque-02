@@ -118,9 +118,10 @@ class Funcs():
             self.NPSH()
             self.Tela_resultado()
 
-            print(self.perda_carga_singular_final_r)
             print(self.perda_carga_singular_final_s)
-            print(self.perda_carga_total)
+            print(self.perda_carga_singular_final_r)
+            print(self.perda_carga_dist_s)
+            print(self.perda_carga_dist_r)
 
 
 
@@ -253,55 +254,55 @@ class Funcs():
         # sucção
 
         if self.combobox_curva90_s.get() != 0:
-            self.perda_carga_singular_curva90_s = (float(self.combobox_curva90_s.get()) * 0.40) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
-        elif self.combobox_curva45_s.get() != 0:
-            self.perda_carga_singular_curva45_s = (float(self.combobox_curva45_s.get()) * 0.20) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
-        elif self.combobox_joelho90_s.get() != 0:
-            self.perda_carga_singular_joelho90_s = (float(self.combobox_joelho90_s.get()) * 0.90) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
-        elif self.combobox_joelho45_s.get() != 0:
-            self.perda_carga_singular_joelho45_s = (float(self.combobox_joelho45_s.get()) * 0.40) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
-        elif self.combobox_crivo_s.get() != 0:
-            self.perda_carga_singular_crivo_s = (float(self.combobox_crivo_s.get()) * 1.75) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
-        elif self.combobox_val_globo_s.get() != 0:
-            self.perda_carga_singular_val_globo_s = (float(self.combobox_val_globo_s.get()) * 10) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
-        elif self.combobox_val_gaveta_s.get() != 0:
-            self.perda_carga_singular_val_gaveta_s = (float(self.combobox_val_gaveta_s.get()) * 0.20) * (
-                        np.power(self.vel_econ_succao, 2) / (2 * 9.81))
+            self.perda_carga_singular_curva90_s = ((float(self.combobox_curva90_s.get()) * 0.40) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
+        if self.combobox_curva45_s.get() != 0:
+            self.perda_carga_singular_curva45_s = ((float(self.combobox_curva45_s.get()) * 0.20) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
+        if self.combobox_joelho90_s.get() != 0:
+            self.perda_carga_singular_joelho90_s = ((float(self.combobox_joelho90_s.get()) * 0.90) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
+        if self.combobox_joelho45_s.get() != 0:
+            self.perda_carga_singular_joelho45_s = ((float(self.combobox_joelho45_s.get()) * 0.40) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
+        if self.combobox_crivo_s.get() != 0:
+            self.perda_carga_singular_crivo_s = ((float(self.combobox_crivo_s.get()) * 1.75) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
+        if self.combobox_val_globo_s.get() != 0:
+            self.perda_carga_singular_val_globo_s = ((float(self.combobox_val_globo_s.get()) * 10) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
+        if self.combobox_val_gaveta_s.get() != 0:
+            self.perda_carga_singular_val_gaveta_s = ((float(self.combobox_val_gaveta_s.get()) * 0.20) * (
+                        np.power(self.vel_econ_succao, 2)) / (2 * 9.81))
         else:
             self.sem_perda_s = 0
 
         # recalque
 
         if self.combobox_curva90_s.get() != 0:
-            self.perda_carga_singular_curva90_r = (float(self.combobox_curva90_r.get()) * 0.40) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_curva45_s.get() != 0:
-            self.perda_carga_singular_curva45_r = (float(self.combobox_curva45_r.get()) * 0.20) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_joelho90_s.get() != 0:
-            self.perda_carga_singular_joelho90_r = (float(self.combobox_joelho90_r.get()) * 0.90) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_joelho45_s.get() != 0:
-            self.perda_carga_singular_joelho45_r = (float(self.combobox_joelho45_r.get()) * 0.40) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_ret_leve_r.get() != 0:
-            self.perda_carga_singular_ret_leve_r = (float(self.combobox_ret_pesada_r.get()) * 2.50) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_ret_pesada_r.get() != 0:
-            self.perda_carga_singular_ret_pesada_r = (float(self.combobox_ret_leve_r.get()) * 2.50) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_val_globo_s.get() != 0:
-            self.perda_carga_singular_val_globo_r = (float(self.combobox_val_globo_r.get()) * 10) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
-        elif self.combobox_val_gaveta_s.get() != 0:
-            self.perda_carga_singular_val_gaveta_r = (float(self.combobox_val_gaveta_r.get()) * 0.20) * (
-                        np.power(self.vel_econ_recalque, 2) / (2 * 9.81))
+            self.perda_carga_singular_curva90_r = ((float(self.combobox_curva90_r.get()) * 0.40) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_curva45_s.get() != 0:
+            self.perda_carga_singular_curva45_r = ((float(self.combobox_curva45_r.get()) * 0.20) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_joelho90_s.get() != 0:
+            self.perda_carga_singular_joelho90_r = ((float(self.combobox_joelho90_r.get()) * 0.90) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_joelho45_s.get() != 0:
+            self.perda_carga_singular_joelho45_r = ((float(self.combobox_joelho45_r.get()) * 0.40) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_ret_leve_r.get() != 0:
+            self.perda_carga_singular_ret_leve_r = ((float(self.combobox_ret_pesada_r.get()) * 2.50) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_ret_pesada_r.get() != 0:
+            self.perda_carga_singular_ret_pesada_r = ((float(self.combobox_ret_leve_r.get()) * 2.50) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_val_globo_s.get() != 0:
+            self.perda_carga_singular_val_globo_r = ((float(self.combobox_val_globo_r.get()) * 10) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
+        if self.combobox_val_gaveta_s.get() != 0:
+            self.perda_carga_singular_val_gaveta_r = ((float(self.combobox_val_gaveta_r.get()) * 0.20) * (
+                        np.power(self.vel_econ_recalque, 2)) / (2 * 9.81))
         else:
             self.sem_perda_r = 0
 
@@ -325,22 +326,22 @@ class Funcs():
     def fator_atrito(self):
 
         #Cálculo do número de Reynolds para sucção
-        self.reynolds_s = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (self.diametro_succao / 100) * 1E-6)
+        self.reynolds_s = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (self.diametro_succao / 1000) * 1E-6)
 
         # Cálculo do número de Reynolds para o recalque
-        self.reynolds_r = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (self.diametro_recalque / 100) * 1E-6)
+        self.reynolds_r = (4 * self.vazao_ajustada_cubic_meters) / (3.1415 * (self.diametro_recalque / 1000) * 1E-6)
 
         #fator de atrito na sucção com pvc
-        self.fator_atrito_s_pvc = 1.325 / (math.log(((5.74 / (self.reynolds_s ** 0.9))), 2)) ** 2
+        self.fator_atrito_s_pvc = 1.325 / (math.log(((5.74 / (self.reynolds_s ** 0.9))), 2.7)) ** 2
 
         # fator de atrito no recalque com pvc
-        self.fator_atrito_r_pvc = 1.325 / (math.log(((5.74 / (self.reynolds_r ** 0.9))), 2)) ** 2
+        self.fator_atrito_r_pvc = 1.325 / (math.log(((5.74 / (self.reynolds_r ** 0.9))), 2.7)) ** 2
 
         # fator de atrito na sucção com ferro galvanizado
-        self.fator_atrito_s_ferro = 1.325 / (math.log(((0.15 / (3.7 * self.diametro_succao) + (5.74 / (self.reynolds_s ** 0.9)))), 2)) ** 2
+        self.fator_atrito_s_ferro = 1.325 / (math.log(((0.15 / (3.7 * self.diametro_succao) + (5.74 / (self.reynolds_s ** 0.9)))), 2.7)) ** 2
 
         # fator de atrito no recalque com ferro galvanizado
-        self.fator_atrito_r_ferro = 1.325 / (math.log(((0.15 / (3.7 * self.diametro_recalque) + (5.74 / (self.reynolds_r ** 0.9)))), 2)) ** 2
+        self.fator_atrito_r_ferro = 1.325 / (math.log(((0.15 / (3.7 * self.diametro_recalque) + (5.74 / (self.reynolds_r ** 0.9)))), 2.7)) ** 2
 
 
 
@@ -358,7 +359,7 @@ class Funcs():
 
 
     def altura_manometrica(self):
-        self.altura_man_bomba = float(self.altura_recalque_entry.get()) + self.perda_carga_total + ((self.vel_econ_recalque**2 - self.vel_econ_succao**2) / 2 * 9.81)
+        self.altura_man_bomba = (float(self.altura_recalque_entry.get()) + float(self.altura_succao_entry.get())) + self.perda_carga_total + ((self.vel_econ_recalque**2 - self.vel_econ_succao**2) /(2 * 9.81))
         self.altura_man_bomba = round(self.altura_man_bomba, 2)
 
     def NPSH(self):
